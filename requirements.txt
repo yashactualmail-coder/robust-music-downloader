@@ -1,5 +1,6 @@
 selenium
 undetected-chromedriver
+setuptools
 fuzzywuzzy
 python-Levenshtein
 pyautogui
