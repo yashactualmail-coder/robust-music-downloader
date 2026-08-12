@@ -1,0 +1,14 @@
+# YouTube Music Downloader Configuration
+
+app:
+  user_data_dir: "./chrome_profile"  # Persistent Chrome profile for login
+  download_dir: "./downloads"
+  similarity_threshold: 80           # 0 to 100 for fuzzy matching
+  use_slm: false                     # Set to true to use Vision model (Ollama)
+
+torlink:
+  command: "npx torlnk"
+
+slm:
+  model_name: "llava:7b"
+  api_url: "http://localhost:11434/api/generate"

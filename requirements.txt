@@ -1,0 +1,10 @@
+selenium
+webdriver-manager
+fuzzywuzzy
+python-Levenshtein
+pyautogui
+tqdm
+pyyaml
+requests
+Pillow
+mutagen
