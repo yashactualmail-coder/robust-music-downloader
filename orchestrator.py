@@ -55,6 +55,7 @@ def main():
 
     print(f"\nStarting download for {len(songs_to_download)} song(s)...\n")
 
+    failed_songs = []
     for i, song in enumerate(songs_to_download):
         song_id = f"{song['artist']} - {song['title']}"
         
@@ -83,10 +84,21 @@ def main():
         except subprocess.CalledProcessError:
             print(f"Failed to download {song_id}")
             progress[song_id] = "failed"
+            failed_songs.append(song_id)
             
         save_progress(progress)
 
     print("\nAll selected songs processed!")
+    
+    if failed_songs:
+        print("\n" + "="*40)
+        print("THE FOLLOWING SONGS FAILED TO DOWNLOAD:")
+        print("="*40)
+        for fs in failed_songs:
+            print(f"- {fs}")
+        print("="*40)
+        print("\nThese failures are usually due to YouTube restrictions on specific videos.")
+        print("You can try downloading them manually or running the script again later.")
 
 if __name__ == "__main__":
     main()
