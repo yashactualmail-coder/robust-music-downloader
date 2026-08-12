@@ -19,8 +19,7 @@ def extract_songs():
     
     driver.get("https://music.youtube.com/playlist?list=LM")
     
-    print("Waiting for you to log in (if needed) and for the page to load...")
-    time.sleep(15) # Wait for initial load or manual login
+    input("Please log in to YouTube Music. Once you see your Liked Songs playlist, press ENTER here in the terminal to continue...")
     
     print("Scrolling to load all songs...")
     last_height = driver.execute_script("return document.documentElement.scrollHeight")
