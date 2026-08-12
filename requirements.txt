@@ -3,3 +3,4 @@ setuptools
 pyyaml
 yt-dlp
 mutagen
+questionary

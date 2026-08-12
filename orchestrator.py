@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 import yaml
+import questionary
 
 def load_progress():
     if os.path.exists("progress.json"):
@@ -28,23 +29,41 @@ def main():
     download_dir = config["app"].get("download_dir", "./downloads")
     os.makedirs(download_dir, exist_ok=True)
 
-    for i, song in enumerate(songs):
+    choices = []
+    for song in songs:
+        song_id = f"{song['artist']} - {song['title']}"
+        if progress.get(song_id) == "done":
+            continue
+        choices.append(questionary.Choice(title=song_id, checked=True))
+
+    if not choices:
+        print("All songs have already been downloaded!")
+        return
+
+    print("\n")
+    selected_song_ids = questionary.checkbox(
+        "Select the songs you want to download (Space to toggle, Enter to confirm):",
+        choices=choices
+    ).ask()
+
+    if selected_song_ids is None or len(selected_song_ids) == 0:
+        print("No songs selected or operation cancelled.")
+        return
+
+    # Filter to only the selected songs
+    songs_to_download = [s for s in songs if f"{s['artist']} - {s['title']}" in selected_song_ids]
+
+    print(f"\nStarting download for {len(songs_to_download)} song(s)...\n")
+
+    for i, song in enumerate(songs_to_download):
         song_id = f"{song['artist']} - {song['title']}"
         
-        if progress.get(song_id) == "done":
-            print(f"Skipping {song_id} (already downloaded)")
-            continue
-            
-        print(f"\nProcessing [{i+1}/{len(songs)}]: {song_id}")
+        print(f"\nProcessing [{i+1}/{len(songs_to_download)}]: {song_id}")
         
         # yt-dlp search query
         query = f"{song['title']} {song['artist']} audio"
         
         # Build yt-dlp command
-        # -x: extract audio
-        # --audio-format flac (highest quality lossless)
-        # --audio-quality 0 (best)
-        # ytsearch1: returns the first search result
         cmd = [
             "yt-dlp",
             f"ytsearch1:{query}",
@@ -65,7 +84,7 @@ def main():
             
         save_progress(progress)
 
-    print("\nAll songs processed!")
+    print("\nAll selected songs processed!")
 
 if __name__ == "__main__":
     main()
