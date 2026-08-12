@@ -34,10 +34,9 @@ class TorlinkInteractor:
         is_match = verify_match(query, top_result, self.threshold)
         
         if is_match:
-            print(f"Match found ({top_result}), downloading...")
-            # subprocess.run(...) -> actually download
-            time.sleep(2) # Simulating download
-            return True
+            print(f"Match found ({top_result}), but Standard CLI mode is currently just a placeholder.")
+            print("Please use SLM mode to actually download files.")
+            return False
         else:
             print(f"No valid match found for {query}")
             return False
