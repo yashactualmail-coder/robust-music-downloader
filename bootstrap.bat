@@ -1,5 +1,5 @@
 @echo off
-echo Starting YouTube Music Downloader...
+echo Starting YouTube Music Downloader (yt-dlp version)...
 
 :: Check for python
 python --version >nul 2>&1
@@ -16,13 +16,15 @@ if exist "%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe" goto chrome_insta
 
 echo Google Chrome is not installed. Installing via winget...
 winget install Google.Chrome -e --accept-source-agreements --accept-package-agreements
-IF %ERRORLEVEL% NEQ 0 (
-    echo Failed to install Chrome automatically. Please install it manually from google.com/chrome.
-    pause
-    exit /b
-)
-
 :chrome_installed
+
+:: Check for FFmpeg (needed for yt-dlp audio extraction)
+ffmpeg -version >nul 2>&1
+IF %ERRORLEVEL% NEQ 0 (
+    echo FFmpeg is not installed. Installing via winget...
+    winget install Gyan.FFmpeg -e --accept-source-agreements --accept-package-agreements
+    echo IMPORTANT: FFmpeg has been installed. You may need to restart your terminal or PC for it to be recognized in your PATH.
+)
 
 :: Create venv if not exists
 if not exist "venv\Scripts\activate.bat" (
@@ -35,23 +37,6 @@ echo Activating virtual environment and installing requirements...
 call venv\Scripts\activate.bat
 call pip install --upgrade pip
 call pip install -r requirements.txt
-
-:: Check for node (for torlink)
-node -v >nul 2>&1
-IF %ERRORLEVEL% NEQ 0 (
-    echo Node.js is not installed. Please install Node.js from nodejs.org or via winget.
-    pause
-    exit /b
-)
-
-:: Check for Ollama
-ollama --version >nul 2>&1
-IF %ERRORLEVEL% NEQ 0 (
-    echo Ollama is not installed. If you plan to use SLM mode, please install Ollama from ollama.com.
-) ELSE (
-    echo Checking for LLaVA model for SLM mode...
-    ollama pull llava:7b
-)
 
 echo.
 echo ========================================

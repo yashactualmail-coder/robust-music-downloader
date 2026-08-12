@@ -1,10 +1,7 @@
-import sys
-import yaml
 import json
 import os
 import subprocess
-from torlink_interactor import TorlinkInteractor
-from slm_navigator import SLMNavigator
+import yaml
 
 def load_progress():
     if os.path.exists("progress.json"):
@@ -15,10 +12,6 @@ def load_progress():
 def save_progress(progress):
     with open("progress.json", "w") as f:
         json.dump(progress, f, indent=4)
-
-def log_manual(song, reason):
-    with open("manual_downloads.txt", "a", encoding="utf-8") as f:
-        f.write(f"{song['artist']} - {song['title']} | Reason: {reason}\n")
 
 def main():
     with open("config.yaml", "r") as f:
@@ -32,19 +25,8 @@ def main():
         songs = json.load(f)
 
     progress = load_progress()
-    
-    use_slm = config["app"].get("use_slm", False) or "--slm" in sys.argv
-    threshold = config["app"].get("similarity_threshold", 80)
     download_dir = config["app"].get("download_dir", "./downloads")
-    
     os.makedirs(download_dir, exist_ok=True)
-
-    if use_slm:
-        print("Using SLM mode for navigation.")
-        navigator = SLMNavigator(config["slm"]["api_url"], config["slm"]["model_name"])
-    else:
-        print("Using standard CLI interaction.")
-        interactor = TorlinkInteractor(config["torlink"]["command"], threshold, download_dir)
 
     for i, song in enumerate(songs):
         song_id = f"{song['artist']} - {song['title']}"
@@ -52,30 +34,35 @@ def main():
         if progress.get(song_id) == "done":
             print(f"Skipping {song_id} (already downloaded)")
             continue
-        if progress.get(song_id) == "manual":
-            print(f"Skipping {song_id} (marked for manual download)")
-            continue
             
         print(f"\nProcessing [{i+1}/{len(songs)}]: {song_id}")
         
-        success = False
-        if use_slm:
-            process = subprocess.Popen(config["torlink"]["command"], shell=True)
-            import time
-            time.sleep(5) # wait for startup
-            
-            success = navigator.download_song(song['artist'], song['title'])
-            
-            process.terminate()
-        else:
-            success = interactor.download_song(song['artist'], song['title'])
-
-        if success:
+        # yt-dlp search query
+        query = f"{song['title']} {song['artist']} audio"
+        
+        # Build yt-dlp command
+        # -x: extract audio
+        # --audio-format flac (highest quality lossless)
+        # --audio-quality 0 (best)
+        # ytsearch1: returns the first search result
+        cmd = [
+            "yt-dlp",
+            f"ytsearch1:{query}",
+            "-x",
+            "--audio-format", "flac",
+            "--audio-quality", "0",
+            "--embed-metadata",
+            "-o", f"{download_dir}/%(title)s.%(ext)s"
+        ]
+        
+        try:
+            # We don't suppress output so the user can see download progress in the terminal
+            subprocess.run(cmd, check=True)
             progress[song_id] = "done"
-        else:
-            progress[song_id] = "manual"
-            log_manual(song, "Failed or verification mismatch")
-
+        except subprocess.CalledProcessError:
+            print(f"Failed to download {song_id}")
+            progress[song_id] = "failed"
+            
         save_progress(progress)
 
     print("\nAll songs processed!")
