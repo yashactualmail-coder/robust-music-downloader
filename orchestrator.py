@@ -1,3 +1,4 @@
+import sys
 import yaml
 import json
 import os
@@ -32,7 +33,7 @@ def main():
 
     progress = load_progress()
     
-    use_slm = config["app"].get("use_slm", False)
+    use_slm = config["app"].get("use_slm", False) or "--slm" in sys.argv
     threshold = config["app"].get("similarity_threshold", 80)
     download_dir = config["app"].get("download_dir", "./downloads")
     
