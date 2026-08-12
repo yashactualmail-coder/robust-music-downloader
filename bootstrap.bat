@@ -9,6 +9,21 @@ IF %ERRORLEVEL% NEQ 0 (
     exit /b
 )
 
+:: Check for Chrome
+if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" goto chrome_installed
+if exist "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" goto chrome_installed
+if exist "%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe" goto chrome_installed
+
+echo Google Chrome is not installed. Installing via winget...
+winget install Google.Chrome -e --accept-source-agreements --accept-package-agreements
+IF %ERRORLEVEL% NEQ 0 (
+    echo Failed to install Chrome automatically. Please install it manually from google.com/chrome.
+    pause
+    exit /b
+)
+
+:chrome_installed
+
 :: Create venv if not exists
 if not exist "venv\Scripts\activate.bat" (
     echo Creating virtual environment...

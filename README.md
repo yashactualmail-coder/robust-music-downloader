@@ -2,26 +2,16 @@
 
 A Windows tool that extracts all songs from YouTube Music "Liked songs" library and searches for a matching torrent via the command-line tool `torlink`.
 
-## Setup
+## Setup & Usage
 
-1. Run `bootstrap.bat` to create the virtual environment and install dependencies.
-2. Review and adjust `config.yaml` as needed.
+This is a one-click solution.
 
-## Usage
-
-1. Activate the virtual environment:
-   ```cmd
-   venv\Scripts\activate.bat
-   ```
-2. Extract your liked songs from YouTube Music:
-   ```cmd
-   python extract_liked_songs.py
-   ```
-   (This will open Chrome. Log in to your Google account when prompted).
-3. Start the orchestrator to begin downloading:
-   ```cmd
-   python orchestrator.py
-   ```
+1. Review and adjust `config.yaml` as needed (e.g. enable SLM mode).
+2. Double-click `bootstrap.bat`.
+   - It will automatically check for Google Chrome and install it if missing.
+   - It will install all dependencies in a virtual environment.
+   - It will run the extractor. (Chrome will open; please log in to your Google account when prompted).
+   - It will then start the orchestrator to begin downloading.
 
 ## Modes
 

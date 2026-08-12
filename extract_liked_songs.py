@@ -14,7 +14,7 @@ def extract_songs():
     profile_path = os.path.abspath(config["app"]["user_data_dir"])
     
     options = webdriver.ChromeOptions()
-    options.add_argument(f"user-data-dir={profile_path}")
+    options.add_argument(f"--user-data-dir={profile_path}")
 
     print("Launching Chrome. Please log in to YouTube Music if prompted...")
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
