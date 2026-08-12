@@ -1,5 +1,5 @@
 selenium
-webdriver-manager
+undetected-chromedriver
 fuzzywuzzy
 python-Levenshtein
 pyautogui

@@ -1,10 +1,8 @@
 import time
 import json
 import os
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+import undetected_chromedriver as uc
 import yaml
 
 def extract_songs():
@@ -13,11 +11,11 @@ def extract_songs():
 
     profile_path = os.path.abspath(config["app"]["user_data_dir"])
     
-    options = webdriver.ChromeOptions()
+    options = uc.ChromeOptions()
     options.add_argument(f"--user-data-dir={profile_path}")
 
     print("Launching Chrome. Please log in to YouTube Music if prompted...")
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver = uc.Chrome(options=options)
     
     driver.get("https://music.youtube.com/playlist?list=LM")
     
