@@ -71,6 +71,8 @@ def main():
             "--audio-format", "flac",
             "--audio-quality", "0",
             "--embed-metadata",
+            "--force-ipv4",
+            "--extractor-args", "youtube:player_client=android",
             "-o", f"{download_dir}/%(title)s.%(ext)s"
         ]
         
